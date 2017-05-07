@@ -1,0 +1,18 @@
+# ignore training and testing data.
+images/
+
+# ignore data files.
+*.xml
+*.txt
+
+# ignore log files.
+*.log
+
+# ignore obj files.
+*.o
+
+# ignore temporary files.
+*~
+*.swp
+
+design.md
