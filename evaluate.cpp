@@ -48,8 +48,7 @@ int main(int argc, char **argv)
     /* Evaluates classifier. Computes confusion matrix. */
     for (int i = 0; i < testImagesPath.size(); i++)
     {
-        cout << "Testing image " << i+1 << "/" << testImagesPath.size();
-        cout << endl;
+        //cout << "Testing image " << i+1 << "/" << testImagesPath.size();
 
         string& imagePath = testImagesPath[i];
         Mat image = imread(imageDir + imagePath);
@@ -61,7 +60,10 @@ int main(int argc, char **argv)
         // Predicts the label of the test image using knn. k = 5.
         int predictedLabel = knnClassify(h, histograms, trainingLabels, 5);
         int realLabel = realLabels[i];
-        int &res = cm.at<int>(realLabel, predictedLabel);
+
+        // The range of label is within [1,9], while the index of cm is
+        // within [0,8].
+        int &res = cm.at<int>(realLabel-1, predictedLabel-1);
         res = res + 1;
     }
 
@@ -140,10 +142,12 @@ int knnClassify(Mat& testH, Mat& histograms, vector<int>& trainingLabels,
     Mat indices;
     cv::sortIdx(dist, indices, CV_SORT_EVERY_ROW + CV_SORT_DESCENDING);
 
-    Mat counter = Mat::zeros(1, histograms.rows, CV_32S);
+    Mat counter = Mat::zeros(1, 9, CV_32S);
     for (int i = 0; i < K; i++)
     {
-        int labelId = indices.at<int>(0,i);
+        // index of the i-th closest observations in histograms
+        int idx = indices.at<int>(0,i);
+        int labelId = trainingLabels[idx];
         counter.at<int>(0,labelId) = counter.at<int>(0,labelId) + 1;
     }
     
