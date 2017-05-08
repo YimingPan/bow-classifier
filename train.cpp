@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <cstdio>
 #include <sys/time.h>
+#include <omp.h>
 
 
 /* Global variables. */
@@ -58,6 +58,8 @@ int main(int argc, char **argv)
     cout << "Elapsed time(ms): " << toc() << endl;
     dict.save("dictionary/");
 
+    //Dictionary dict;
+    //dict.load("dictionary/dictionary.xml");
     cout << "Build word maps ...\n";
     tic();
     computeWordmaps(trainingImagesPath, imageDir, targetDir, dict, filterbank);
@@ -100,11 +102,14 @@ time_t toc()
 void computeWordmaps(vector<string>& trainingImagesPath, string& imageDir,
         string& targetDir, Dictionary& dictionary, FilterBank& filterbank)
 {
-    int cnt = 1, N = trainingImagesPath.size(); // debug info
-    for (string& imagePath : trainingImagesPath)
-    {
-        //cout << "Processing image " << cnt++ << "/" << N << endl; // debug info
+    int N = trainingImagesPath.size(); // debug info
 
+    #pragma omp parallel for
+    for (int i = 0; i < N; i++)
+    {
+        //cout << "Processing image " << i+1 << "/" << N << endl; // debug info
+
+        string& imagePath = trainingImagesPath[i];
         Mat image = imread(imageDir + imagePath);
         Mat wordmap = dictionary.getWordmap(image, filterbank);
 

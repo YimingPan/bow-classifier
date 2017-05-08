@@ -2,13 +2,14 @@ CFLAGS = -g --std=c++11 `pkg-config --cflags opencv`
 LIBS = `pkg-config --libs opencv`
 OBJS = train.o bow.o histogram.o
 DEPS = bow.hpp histogram.hpp
-OPT = -O1
+OPT = -O2
+OMPFLAGS = -fopenmp
 
 %.o: %.cpp $(DEPS)
-	g++ -c -o $@ $< $(OPT) $(CFLAGS) $(LIBS)
+	g++ -c -o $@ $< $(OPT) $(OMPFLAGS) $(CFLAGS)
 
 train: $(OBJS)
-	g++ -o $@ $^ $(OPT) $(CFLAGS) $(LIBS)
+	g++ -o $@ $^ $(OMPFLAGS) $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
