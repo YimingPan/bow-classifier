@@ -5,4 +5,6 @@
 
 void computeHistogram(cv::Mat& wordMap, cv::Mat& h, int dictionarySize);
 
+cv::Mat distance(cv::Mat& sample, cv::Mat& observations);
+
 #endif

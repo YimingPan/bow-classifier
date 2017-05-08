@@ -22,3 +22,20 @@ void computeHistogram(cv::Mat& wordMap, cv::Mat& h, int dictionarySize)
     double sumh = cv::sum(h)[0];
     h = h / sumh;
 }
+
+/*
+ * Returns the distance between sample and every obsevation.
+ * The distance is evaluated by computing the intersection of two observations.
+ * The bigger the intersection of two observations is, the closer they are.
+ */
+cv::Mat distance(cv::Mat& sample, cv::Mat& observations)
+{
+    cv::Mat dist(1, observations.rows, CV_64F);
+    for (int i = 0; i < observations.rows; i++)
+    {
+        cv::Mat intersect = cv::min(sample, observations.row(i));
+        double sumv = cv::sum(intersect)[0];
+        dist.at<double>(0, i) = sumv;
+    }
+    return dist;
+}
